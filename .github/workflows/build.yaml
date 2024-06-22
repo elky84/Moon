@@ -4,6 +4,7 @@ on:
   push:
     branches:
       - main
+  workflow_dispatch: # 수동 실행 가능하게 추가
 
 jobs:
   build:
@@ -20,6 +21,9 @@ jobs:
 
       - name: Install dependencies
         run: npm install
+
+      - name: Pre Build the project
+        run: npm run prebuild
 
       - name: Build the project
         run: npm run build
