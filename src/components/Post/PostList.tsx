@@ -55,6 +55,16 @@ const Tag = styled.span`
   }
 `;
 
+const SearchInput = styled.input`
+  padding: 10px;
+  margin-bottom: 20px;
+  width: 100%;
+  max-width: 400px;
+  font-size: 16px;
+  border: 1px solid #ccc;
+  border-radius: 5px;
+`;
+
 interface PostData {
   title: string;
   summary: string;
@@ -72,6 +82,7 @@ const PostList: React.FC<PostListProps> = ({ type }) => {
   const [selectedTags, setSelectedTags] = useState<string[]>([]);
   const [selectedYears, setSelectedYears] = useState<string[]>([]);
   const [years, setYears] = useState<string[]>([]);
+  const [searchQuery, setSearchQuery] = useState<string>(''); // 검색어 상태 추가
 
   const allTags = Array.from(new Set(postsData.flatMap(post => post.tags)));
 
@@ -121,14 +132,31 @@ const PostList: React.FC<PostListProps> = ({ type }) => {
     window.history.replaceState({}, '', queryString ? `?${queryString}` : window.location.pathname);
   };
 
-  const filteredPosts = postsData.filter(post =>
-    type === 'tag'
-      ? selectedTags.every(tag => post.tags.includes(tag))
-      : selectedYears.includes(post.date.slice(0, 4))
-  );
+  const filteredPosts = postsData.filter(post => {
+    const title = post.title || ''; // title이 undefined일 경우 빈 문자열로 대체
+    const summary = post.summary || ''; // summary가 undefined일 경우 빈 문자열로 대체
+  
+    const matchesTag = type === 'tag' ? selectedTags.every(tag => post.tags.includes(tag)) : true;
+    const matchesYear = type === 'year' ? selectedYears.includes(post.date.slice(0, 4)) : true;
+  
+    // 검색어를 '|'로 나눈 후 각각을 조건으로 검사
+    const searchTerms = searchQuery.split('|').map(term => term.trim().toLowerCase());
+    const matchesSearch = searchTerms.every(term => 
+      title.toString().toLowerCase().includes(term) || summary.toString().toLowerCase().includes(term)
+    );
+  
+    return matchesTag && matchesYear && matchesSearch;
+  });
+  
 
   return (
     <>
+      <SearchInput
+        type="text"
+        placeholder="Search posts..."
+        value={searchQuery}
+        onChange={e => setSearchQuery(e.target.value)} // 검색 상태 업데이트
+      />
       <div>
         {type === 'year' &&
           years.map(year => (
@@ -151,14 +179,14 @@ const PostList: React.FC<PostListProps> = ({ type }) => {
         {type === 'tag' &&
           allTags.map(tag => (
             <Tag
-            key={tag}
-            className={selectedTags.includes(tag) ? 'selected' : ''}
-            onClick={() => handleTagClick(tag)}
-          >
-            {tag}
-          </Tag>
+              key={tag}
+              className={selectedTags.includes(tag) ? 'selected' : ''}
+              onClick={() => handleTagClick(tag)}
+            >
+              {tag}
+            </Tag>
           ))}
-        </div>
+      </div>
       {filteredPosts.length > 0 ? (
         filteredPosts.map(post => (
           <Card key={post.slug}>
