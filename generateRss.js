@@ -23,7 +23,7 @@ const generateRSS = () => {
     feed.item({
       title: post.title,
       description: `${post.title} - 태그: ${post.tags.join(", ")}`,
-      url: `https://elky84.github.io/fan/posts/${post.slug}`,
+      url: `https://elky84.github.io/fan#/posts/${post.slug}`,
       date: post.date,
     });
   });

@@ -13,3 +13,9 @@
 ![GitHub code size in bytes](https://img.shields.io/github/languages/code-size/elky84/fan.svg)
 
 # fan
+
+json, rss 데이터 리빌드
+
+```
+npm run prebuild
+```
