@@ -84,10 +84,13 @@ const PostList: React.FC<PostListProps> = ({ type }) => {
   useEffect(() => {
     fetch(process.env.PUBLIC_URL + '/postsData.json')
       .then(response => response.json())
-      .then(data => setPostsData(data))
+      .then((data: PostData[]) => {
+        const sortedData = data.sort((a: PostData, b: PostData) => new Date(b.date).getTime() - new Date(a.date).getTime());
+        setPostsData(sortedData);
+      })
       .catch(error => console.error('Error fetching posts data:', error));
   }, []);
-
+  
   useEffect(() => {
     const yearsSet = new Set(postsData.map(post => post.date.slice(0, 4)));
     setSelectedYears(Array.from(yearsSet));

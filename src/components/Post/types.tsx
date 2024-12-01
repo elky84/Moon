@@ -3,7 +3,7 @@ export interface PostData {
     summary: string;
     tags: string[];
     slug: string;
-    date: string; // Assuming date is in 'YYYY-MM-DD' format
+    date: string;
 }
 
 export interface PostListProps {

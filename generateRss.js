@@ -15,8 +15,11 @@ const generateRSS = () => {
   // postsData.json 읽기
   const postsData = JSON.parse(fs.readFileSync("./public/postsData.json", "utf-8"));
 
-  // JSON 데이터로부터 RSS 아이템 추가
-  postsData.forEach((post) => {
+  // 날짜 기준으로 내림차순 정렬
+  const sortedData = postsData.sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime());
+
+  // 정렬된 JSON 데이터로부터 RSS 아이템 추가
+  sortedData.forEach((post) => {
     feed.item({
       title: post.title,
       description: `${post.title} - 태그: ${post.tags.join(", ")}`,
