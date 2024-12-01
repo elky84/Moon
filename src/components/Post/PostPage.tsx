@@ -68,12 +68,14 @@ const PostPage: React.FC = () => {
     };
 
     const replaceYouTubeLinks = (markdown: string): string => {
-      const youtubeLinkRegex = /^https:\/\/www\.youtube\.com\/watch\?v=([a-zA-Z0-9_-]+)$/gm;
-      return markdown.replace(youtubeLinkRegex, (match, videoId) => {
-        return `<iframe width="1024" height="576" src="https://www.youtube.com/embed/${videoId}" frameborder="0" allowfullscreen></iframe>`;
+      const youtubeLinkRegex = /\[.*?\]\((https:\/\/www\.youtube\.com\/watch\?v=([a-zA-Z0-9_-]+))\)|^(https:\/\/www\.youtube\.com\/watch\?v=([a-zA-Z0-9_-]+))$/gm;
+    
+      return markdown.replace(youtubeLinkRegex, (match, _, markdownVideoId, standaloneVideoLink, standaloneVideoId) => {
+        const videoId = markdownVideoId || standaloneVideoId;
+        return `<iframe width="1024" height="576" src="https://www.youtube.com/embed/${videoId}" frameborder="0" allowfullscreen></iframe>\n`;
       });
     };
-
+    
     const fetchMarkdown = async (): Promise<{ metadata: PostMetadata; markdownContent: string }> => {
       try {
         const response = await fetch(process.env.PUBLIC_URL + `/posts/${slug}.md`);

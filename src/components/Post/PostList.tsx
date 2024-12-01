@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import styled from 'styled-components';
 import { Link } from 'react-router-dom';
+import { PostData, PostListProps } from './types';
 
 const Card = styled.div`
   background-color: #1f1f1f;
@@ -65,18 +66,6 @@ const SearchInput = styled.input`
   border-radius: 5px;
 `;
 
-interface PostData {
-  title: string;
-  summary: string;
-  tags: string[];
-  slug: string;
-  date: string; // Assuming date is in 'YYYY-MM-DD' format
-}
-
-interface PostListProps {
-  type: 'tag' | 'year';
-}
-
 const PostList: React.FC<PostListProps> = ({ type }) => {
   const [postsData, setPostsData] = useState<PostData[]>([]);
   const [selectedTags, setSelectedTags] = useState<string[]>([]);
@@ -84,8 +73,14 @@ const PostList: React.FC<PostListProps> = ({ type }) => {
   const [years, setYears] = useState<string[]>([]);
   const [searchQuery, setSearchQuery] = useState<string>(''); // 검색어 상태 추가
 
-  const allTags = Array.from(new Set(postsData.flatMap(post => post.tags)));
-
+  const allTags = Array.from(
+    new Set(
+      postsData
+        .flatMap(post => post.tags)
+        .filter(tag => tag !== 'fan')
+    )
+  );
+  
   useEffect(() => {
     fetch(process.env.PUBLIC_URL + '/postsData.json')
       .then(response => response.json())
