@@ -2,14 +2,15 @@ import React, { useEffect, useState } from 'react';
 import styled from 'styled-components';
 import { Link } from 'react-router-dom';
 import { PostData, PostListProps } from './types';
+import { Tag } from "antd";
 
 const Card = styled.div`
-  background-color: #1f1f1f;
+  background-color:rgb(213, 226, 235);
   color: #ffffff;
   border-radius: 10px;
   overflow: hidden;
   margin-right: 20px;
-  margin-bottom: 20px;
+  margin-top: 20px;
   padding: 20px;
   display: block;
   text-decoration: none;
@@ -21,7 +22,7 @@ const CardContent = styled.div`
 
 const Title = styled(Link)`
   font-size: 24px;
-  color: #4d7bf3;
+  color:rgb(26, 85, 248);
   text-decoration: none;
 
   &:hover {
@@ -35,30 +36,23 @@ const TagsContainer = styled.div`
   margin-top: 10px;
 `;
 
-const Tag = styled.span`
-  display: inline-block;
-  background-color: #e0e0e0;
-  color: #333;
-  padding: 0.2em 0.4em;
-  margin: 0.2em;
-  border-radius: 0.2em;
-  font-size: 0.8em;
-  text-decoration: none;
+interface StyledTagProps {
+  checked: boolean;
+}
+
+const StyledTag = styled(Tag.CheckableTag)<StyledTagProps>`
+  background-color: ${({ checked }) => (checked ? '#4d7bf3' : '#e0e0e0')};
+  color: ${({ checked }) => (checked ? 'white' : '#333')};
+  padding: 5px 10px;
+  margin: 5px;
+  border-radius: 5px;
   cursor: pointer;
-
-  &:hover {
-    background-color: #ccc;
-  }
-
-  &.selected {
-    background-color: #4d7bf3;
-    color: white;
-  }
+  border: none;
 `;
 
 const SearchInput = styled.input`
   padding: 10px;
-  margin-bottom: 20px;
+  margin: 20px;
   width: 100%;
   max-width: 400px;
   font-size: 16px;
@@ -157,33 +151,32 @@ const PostList: React.FC<PostListProps> = ({ type }) => {
       />
       <div>
         {type === 'year' &&
-          years.map(year => (
-            <button
-              key={year}
-              onClick={() => handleYearToggle(year)}
-              style={{
-                backgroundColor: selectedYears.includes(year) ? '#4d7bf3' : '#e0e0e0',
-                color: selectedYears.includes(year) ? 'white' : '#333',
-                padding: '5px 10px',
-                margin: '5px',
-                borderRadius: '5px',
-                cursor: 'pointer',
-                border: 'none',
-              }}
-            >
-              {year}
-            </button>
-          ))}
+          <TagsContainer>
+
+            {years.map(year => (
+              <StyledTag
+                checked={selectedYears.includes(year)}
+                key={year}
+                onClick={() => handleYearToggle(year)}
+              >
+                {year}
+              </StyledTag>
+            ))}
+            </TagsContainer>
+        }
         {type === 'tag' &&
-          allTags.map(tag => (
-            <Tag
-              key={tag}
-              className={selectedTags.includes(tag) ? 'selected' : ''}
-              onClick={() => handleTagClick(tag)}
-            >
-              {tag}
-            </Tag>
-          ))}
+          <TagsContainer>
+            {allTags.map(tag => (
+              <StyledTag
+                key={tag}
+                checked={selectedTags.includes(tag)}
+                onClick={() => handleTagClick(tag)}
+              >
+                {tag}
+              </StyledTag>
+            ))}
+          </TagsContainer>
+          }
       </div>
       {filteredPosts.length > 0 ? (
         filteredPosts.map(post => (
@@ -195,13 +188,13 @@ const PostList: React.FC<PostListProps> = ({ type }) => {
               <p>{post.summary}</p>
               <TagsContainer>
                 {post.tags.map(tag => (
-                  <Tag
+                  <StyledTag
                     key={tag}
-                    className={type === 'tag' && selectedTags.includes(tag) ? 'selected' : ''}
+                    checked={selectedTags.includes(tag)}
                     onClick={() => handleTagClick(tag)}
                   >
                     {tag}
-                  </Tag>
+                  </StyledTag>
                 ))}
               </TagsContainer>
             </CardContent>

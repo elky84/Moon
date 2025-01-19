@@ -2,6 +2,7 @@ import React, { useEffect, useState } from 'react';
 import styled from 'styled-components';
 import { Link } from 'react-router-dom';
 import { PostData } from './types';
+import { Tag } from "antd";
 
 const Card = styled.div`
   background-color: #1f1f1f;
@@ -33,27 +34,6 @@ const TagsContainer = styled.div`
   display: flex;
   flex-wrap: wrap;
   margin-top: 10px;
-`;
-
-const Tag = styled.span`
-  display: inline-block;
-  background-color: #e0e0e0;
-  color: #333;
-  padding: 0.2em 0.4em;
-  margin: 0.2em;
-  border-radius: 0.2em;
-  font-size: 0.8em;
-  text-decoration: none;
-  cursor: pointer;
-
-  &:hover {
-    background-color: #ccc;
-  }
-
-  &.selected {
-    background-color: #4d7bf3;
-    color: white;
-  }
 `;
 
 const TagPostList: React.FC = () => {
@@ -105,13 +85,13 @@ const TagPostList: React.FC = () => {
       {/* Display all tags */}
       <TagsContainer>
         {allTags.map(tag => (
-          <Tag
+            <Tag.CheckableTag
             key={tag}
-            className={selectedTags.includes(tag) ? 'selected' : ''}
+            checked={selectedTags.includes(tag)}
             onClick={() => handleTagClick(tag)}
           >
             {tag}
-          </Tag>
+          </Tag.CheckableTag>
         ))}
       </TagsContainer>
 
